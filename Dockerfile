@@ -22,15 +22,16 @@ ENV APP_BASE /srv/madsonic
 
 #Create sickrage folder structure & set as volumes
 RUN mkdir -p ${APP_BASE}/app && \
+	mkdir -p ${APP_BASE}/data && \
 	mkdir -p ${APP_BASE}/config && \
-	mkdir -p ${APP_BASE}/config/transcode
+	mkdir -p ${APP_BASE}/transcode_lib && \
 
 # Download & Install Madsonic
 RUN mkdir -p "${APP_BASE}/data/transcode" \
  && wget -O "${APP_BASE}/madsonic.zip" ${APP_URL} \
  && wget -O "${APP_BASE}/transcode.zip" ${TRAN_URL} \
  && unzip "${APP_BASE}/madsonic.zip" -d ${APP_BASE}/app \
- && unzip "${APP_BASE}/transcode.zip" -d "${APP_BASE}/config/transcode" \
+ && unzip "${APP_BASE}/transcode.zip" -d "${APP_BASE}/transcode_lib" \
  && rm "${APP_BASE}/madsonic.zip" \
  && rm "${APP_BASE}/transcode.zip"
 
