@@ -1,12 +1,24 @@
 FROM mediadepot/base
 
-# Install apk packages
+#Create madsonic folder structure & set as volumes
+RUN mkdir -p /srv/madsonic/app && \
+	mkdir -p /srv/madsonic/data && \
+	mkdir -p /srv/madsonic/config && \
+	mkdir -p /srv/madsonic/transcode_lib
+
+WORKDIR /srv/madsonic/app
+
+# Install permanent apk packages
 RUN apk --update upgrade \
  && apk add \
   openjdk8-jre-base \
   unzip \
   wget \
  && rm /var/cache/apk/*
+
+#start.sh will run madsonic.
+ADD ./start.sh /srv/start.sh
+RUN chmod u+x  /srv/start.sh
 
 # Set Madsonic Package Information
 ENV PKG_NAME madsonic
@@ -20,12 +32,6 @@ ENV APP_URL ${APP_BASEURL}/${PKG_VERA}/${APP_PKGNAME}
 ENV TRAN_URL ${APP_BASEURL}/transcode/${TRAN_PKGNAME}
 ENV APP_BASE /srv/madsonic
 
-#Create sickrage folder structure & set as volumes
-RUN mkdir -p ${APP_BASE}/app && \
-	mkdir -p ${APP_BASE}/data && \
-	mkdir -p ${APP_BASE}/config && \
-	mkdir -p ${APP_BASE}/transcode_lib && \
-
 # Download & Install Madsonic
 RUN mkdir -p "${APP_BASE}/data/transcode" \
  && wget -O "${APP_BASE}/madsonic.zip" ${APP_URL} \
@@ -36,14 +42,9 @@ RUN mkdir -p "${APP_BASE}/data/transcode" \
  && rm "${APP_BASE}/transcode.zip"
 
 
-#Copy over start script and docker-gen files
-ADD ./start.sh /srv/start.sh
-RUN chmod u+x  /srv/start.sh
 
-VOLUME ["/srv/madsonic/app", "/srv/madsonic/config", "/srv/madsonic/data"]
+VOLUME ["/srv/madsonic/config", "/srv/madsonic/data"]
 
-# HTTP ports
 EXPOSE 8080
-#CMD ["sh"]
 
 CMD ["/srv/start.sh"]

@@ -1,10 +1,16 @@
-#!/bin/sh
+#!/usr/bin/env sh
+
+#run the default config script
+sh /srv/config.sh
 
 #create folders on config
 mkdir -p /srv/madsonic/config/playlists/import
 mkdir -p /srv/madsonic/config/playlists/export
 mkdir -p /srv/madsonic/config/playlists/backup
 mkdir -p /srv/madsonic/data/transcode
+
+#chown the couchpotato directory by the new user
+chown mediadepot:mediadepot -R /srv/madsonic
 
 #copy transcode to config directory - transcode directory is subdir of path set from --home flag, do not alter
 cp /srv/madsonic/config/transcode_lib/transcode/* /srv/madsonic/data/transcode/
@@ -13,7 +19,7 @@ cp /srv/madsonic/config/transcode_lib/transcode/* /srv/madsonic/data/transcode/
 sed -i 's|-jar madsonic-booter.jar > \${LOG} 2>\&1 \&|-jar /srv/madsonic/app/madsonic-booter.jar > \${LOG} 2>\&1|g' /srv/madsonic/app/madsonic.sh
 
 
-/srv/madsonic/app/madsonic.sh \
+su -c "/srv/madsonic/app/madsonic.sh \
   --home=/srv/madsonic/config \
   --context-path=/ \
   --default-music-folder=/mnt/music \
@@ -23,4 +29,4 @@ sed -i 's|-jar madsonic-booter.jar > \${LOG} 2>\&1 \&|-jar /srv/madsonic/app/mad
   --default-playlist-import-folder=/srv/madsonic/config/playlists/import \
   --default-playlist-export-folder=/srv/madsonic/config/playlists/export \
   --default-playlist-backup-folder=/srv/madsonic/config/playlists/backup \
-  --port=8080
+  --port=8080" mediadepot
