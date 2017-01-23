@@ -45,4 +45,4 @@ COPY rootfs /
 VOLUME ["/srv/madsonic/config", "/srv/madsonic/data"]
 EXPOSE 8080
 
-#CMD ["/init"]
+ENTRYPOINT ["/init"]
