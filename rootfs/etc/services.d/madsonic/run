@@ -13,14 +13,14 @@ mkdir -p /srv/madsonic/data/transcode
 chown mediadepot:mediadepot -R /srv/madsonic
 
 #copy transcode to config directory - transcode directory is subdir of path set from --home flag, do not alter
-cp /srv/madsonic/config/transcode_lib/transcode/* /srv/madsonic/data/transcode/
+cp -R /srv/madsonic/transcode_lib/transcode/* /srv/madsonic/data/transcode/
 
 # Force Madsonic to run in foreground
 sed -i 's|-jar madsonic-booter.jar > \${LOG} 2>\&1 \&|-jar /srv/madsonic/app/madsonic-booter.jar > \${LOG} 2>\&1|g' /srv/madsonic/app/madsonic.sh
 
 # run Madsonic
 exec s6-setuidgid mediadepot /srv/madsonic/app/madsonic.sh \
-  --home=/srv/madsonic/config \
+  --home=/srv/madsonic/data \
   --context-path=/ \
   --default-music-folder=/mnt/music \
   --default-podcast-folder=/mnt/music \
